@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Churn Prediction</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #9CC3D5FF;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        #navbar {
+            background-color: #0063B2FF;
+            color: #1d3557;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #navbar a {
+            color: black;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #churnForm {
+            background-color: lightgray;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 600px;
+            text-align: center;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid black;
+            margin-top: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-family: 'Roboto';
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .left-section {
+            flex: 1;
+            margin-right: 10px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-section {
+            flex: 1;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: black;
+        }
+
+        input {
+            width: calc(100% - 16px);
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #0063B2FF;
+            color: #fff;
+            font-size: 18px;
+            padding: 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            width: calc(100% - 16px);
+        }
+
+        button:hover {
+            background-color: #0063B2FF;
+        }
+
+        span.info {
+            margin-left: 5px;
+            font-size: 16px;
+            cursor: help;
+        }
+
+        #predictionResult {
+            text-align: center;
+            margin-top: 15px;
+            color: black;
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar">
+        <h1 style="font-size: 26px;">E-Commorce Customer Churn Prediction</h1>
+        <div>
+            <a href="#" style="color: white;">Home</a>
+            <a href="#" style="color: white;">ContactUs</a>
+            <a href="#" style="color: white;">Login</a>
+        </div>
+    </div>
+    <form id="churnForm" action="/predict" method="post">
+        <!-- Top Section (Customer ID and Fetch Button) -->
+        <div class="form-section">
+            <div class="right-section">
+                <label for="customer_id">Customer ID:</label>
+                <input type="text" name="customer_id" required>
+            </div>
+            <div class="right-section">
+                <button type="button" onclick="fetchData()">Fetch Details</button>
+            </div>
+        </div>
+
+        <!-- First Section (Left) -->
+        <div class="form-section">
+            <div class="left-section">
+                <label for="Tenure">Tenure:</label>
+                <input type="text" name="Tenure" required readonly>
+                
+                <label for="CityTier">City Tier:</label>
+                <input type="text" name="CityTier" required readonly>
+                
+                <label for="WarehouseToHome">Warehouse To Home:</label>
+                <input type="text" name="WarehouseToHome" required readonly>
+                
+                <label for="PreferredPaymentMode">
+                    PreferredPaymentMode:
+                    <span class="info" title="0 - CC&#10;1 - COD&#10;2 - Cash on Delivery&#10;3 - Credit Card&#10;4 - Debit Card&#10;5 - E wallet&#10;6 - UPI">ℹ️</span>
+                </label>
+                <input type="text" name="PreferredPaymentMode" required readonly>
+                
+                <label for="Gender">
+                    Gender:
+                    <span class="info" title="0 - Female&#10;1 - Male">ℹ️</span>
+                </label>
+                <input type="text" name="Gender" required readonly>
+                
+                <label for="NumberOfDeviceRegistered">Number of Devices Registered:</label>
+                <input type="text" name="NumberOfDeviceRegistered" required readonly>
+                
+                <label for="PreferredOrderCat">
+                    Preferred Order Category:
+                    <span class="info" title="0 - Fashion&#10;1 - Grocery&#10;2 - Laptop & Accessory&#10;3 - Mobile&#10;4 - Mobile Phone&#10;5 - Others">ℹ️</span>
+                </label>
+                <input type="text" name="PreferredOrderCat" required readonly>
+            </div>
+
+            <!-- Second Section (Right) -->
+            <div class="right-section">
+                <label for="SatisfactionScore">Satisfaction Score:</label>
+                <input type="text" name="SatisfactionScore" required readonly>
+                
+                <label for="MaritalStatus">
+                    MaritalStatus:
+                    <span class="info" title="0 - Divorced&#10;1 - Married&#10;2 - Single">ℹ️</span>
+                </label>
+                <input type="text" name="MaritalStatus" required readonly>
+                
+                <label for="NumberOfAddress">Number of Addresses:</label>
+                <input type="text" name="NumberOfAddress" required readonly>
+                
+                <label for="Complain">Complain:</label>
+                <input type="text" name="Complain" required readonly>
+                
+                <label for="OrderCount">Order Count:</label>
+                <input type="text" name="OrderCount" required readonly>
+                
+                <label for="DaySinceLastOrder">Days Since Last Order:</label>
+                <input type="text" name="DaySinceLastOrder" required readonly>
+                
+                <label for="CashbackAmount">Cashback Amount:</label>
+                <input type="text" name="CashbackAmount" required readonly>
+            </div>
+        </div>
+
+        <!-- Prediction Button (Centered) -->
+        <button type="button" onclick="predictChurn()">Predict</button>
+
+        <!-- Prediction Result -->
+        <h2 id="predictionResult"></h2>
+    </form>
+
+    <script>
+        function fetchData() {
+            var customerId = document.getElementsByName("customer_id")[0].value;
+
+            // Make an AJAX request to fetch data for the given customer ID
+            fetch('/fetch_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'customer_id=' + customerId
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update form fields with fetched data and make them readonly
+                document.getElementsByName("Tenure")[0].value = data.Tenure;
+                document.getElementsByName("Tenure")[0].readOnly = true;
+
+                document.getElementsByName("CityTier")[0].value = data.CityTier;
+                document.getElementsByName("CityTier")[0].readOnly = true;
+
+                document.getElementsByName("WarehouseToHome")[0].value = data.WarehouseToHome;
+                document.getElementsByName("WarehouseToHome")[0].readOnly = true;
+
+                document.getElementsByName("PreferredPaymentMode")[0].value = data.PreferredPaymentMode;
+                document.getElementsByName("PreferredPaymentMode")[0].readOnly = true;
+
+                document.getElementsByName("Gender")[0].value = data.Gender;
+                document.getElementsByName("Gender")[0].readOnly = true;
+
+                document.getElementsByName("NumberOfDeviceRegistered")[0].value = data.NumberOfDeviceRegistered;
+                document.getElementsByName("NumberOfDeviceRegistered")[0].readOnly = true;
+
+                document.getElementsByName("PreferredOrderCat")[0].value = data.PreferredOrderCat;
+                document.getElementsByName("PreferredOrderCat")[0].readOnly = true;
+
+                document.getElementsByName("SatisfactionScore")[0].value = data.SatisfactionScore;
+                document.getElementsByName("SatisfactionScore")[0].readOnly = true;
+
+                document.getElementsByName("MaritalStatus")[0].value = data.MaritalStatus;
+                document.getElementsByName("MaritalStatus")[0].readOnly = true;
+
+                document.getElementsByName("NumberOfAddress")[0].value = data.NumberOfAddress;
+                document.getElementsByName("NumberOfAddress")[0].readOnly = true;
+
+                document.getElementsByName("Complain")[0].value = data.Complain;
+                document.getElementsByName("Complain")[0].readOnly = true;
+
+                document.getElementsByName("OrderCount")[0].value = data.OrderCount;
+                document.getElementsByName("OrderCount")[0].readOnly = true;
+
+                document.getElementsByName("DaySinceLastOrder")[0].value = data.DaySinceLastOrder;
+                document.getElementsByName("DaySinceLastOrder")[0].readOnly = true;
+
+                document.getElementsByName("CashbackAmount")[0].value = data.CashbackAmount;
+                document.getElementsByName("CashbackAmount")[0].readOnly = true;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+        }
+
+        function predictChurn() {
+            // Get the input values from the form
+            var customer_id = document.getElementsByName("customer_id")[0].value;
+            var tenure = parseInt(document.getElementsByName("Tenure")[0].value);
+            var city_tier = parseInt(document.getElementsByName("CityTier")[0].value);
+            var warehouse_to_home = parseInt(document.getElementsByName("WarehouseToHome")[0].value);
+            var preferred_payment_mode = parseInt(document.getElementsByName("PreferredPaymentMode")[0].value);
+            var gender = parseInt(document.getElementsByName("Gender")[0].value);
+            var num_devices_registered = parseInt(document.getElementsByName("NumberOfDeviceRegistered")[0].value);
+            var preferred_order_cat = parseInt(document.getElementsByName("PreferredOrderCat")[0].value);
+            var satisfaction_score = parseInt(document.getElementsByName("SatisfactionScore")[0].value);
+            var marital_status = parseInt(document.getElementsByName("MaritalStatus")[0].value);
+            var num_addresses = parseInt(document.getElementsByName("NumberOfAddress")[0].value);
+            var complain = parseInt(document.getElementsByName("Complain")[0].value);
+            var order_count = parseInt(document.getElementsByName("OrderCount")[0].value);
+            var day_since_last_order = parseInt(document.getElementsByName("DaySinceLastOrder")[0].value);
+            var cashback_amount = parseInt(document.getElementsByName("CashbackAmount")[0].value);
+            
+            // Prepare the data for prediction
+            var data = {
+                'customer_id': customer_id,
+                'Tenure': tenure,
+                'CityTier': city_tier,
+                'WarehouseToHome': warehouse_to_home,
+                'PreferredPaymentMode': preferred_payment_mode,
+                'Gender': gender,
+                'NumberOfDeviceRegistered': num_devices_registered,
+                'PreferredOrderCat': preferred_order_cat,
+                'SatisfactionScore': satisfaction_score,
+                'MaritalStatus': marital_status,
+                'NumberOfAddress': num_addresses,
+                'Complain': complain,
+                'OrderCount': order_count,
+                'DaySinceLastOrder': day_since_last_order,
+                'CashbackAmount': cashback_amount
+            };
+
+            // Make a POST request to the server for prediction
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.text())
+            .then(prediction => {
+                // Update the prediction result in the HTML
+                document.getElementById("predictionResult").innerText = "Churn Prediction: " + prediction;
+            })
+            .catch(error => {
+                console.error('Error predicting churn:', error);
+            });
+        }
+    </script>
+</body>
+</html>
